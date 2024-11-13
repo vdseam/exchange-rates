@@ -15,8 +15,25 @@ protocol CurrencyRepository {
     func getLatestRates(baseCurrencyCode: String) async throws -> CurrencyResponse
 }
 
+final class RemoteCurrencyRepository: CurrencyRepository {
+    private let baseURL = "http://data.fixer.io/api/latest"
+    
+    func getLatestRates(baseCurrencyCode: String) async throws -> CurrencyResponse {
+        guard let url = URL(string: "\(baseURL)?base=\(baseCurrencyCode)") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue(Environment.apiKey, forHTTPHeaderField: "access_key")
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try JSONDecoder().decode(CurrencyResponse.self, from: data)
+    }
+}
+
 final class MockCurrencyRepository: CurrencyRepository {
     func getLatestRates(baseCurrencyCode: String) async throws -> CurrencyResponse {
+        print(Environment.apiKey)
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         guard let jsonData = getMockData() else {

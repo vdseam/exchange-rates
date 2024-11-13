@@ -29,9 +29,22 @@
 		D82F17692CE3FEB100730682 /* exchange-ratesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "exchange-ratesUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D8BDF0C52CE4DBFC004C8C88 /* Exceptions for "exchange-rates" folder in "exchange-rates" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D82F17492CE3FEB000730682 /* exchange-rates */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D82F174C2CE3FEB000730682 /* exchange-rates */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D8BDF0C52CE4DBFC004C8C88 /* Exceptions for "exchange-rates" folder in "exchange-rates" target */,
+			);
 			path = "exchange-rates";
 			sourceTree = "<group>";
 		};
@@ -271,6 +284,8 @@
 /* Begin XCBuildConfiguration section */
 		D82F17712CE3FEB100730682 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D82F174C2CE3FEB000730682 /* exchange-rates */;
+			baseConfigurationReferenceRelativePath = Resources/Configuration.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -334,6 +349,8 @@
 		};
 		D82F17722CE3FEB100730682 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = D82F174C2CE3FEB000730682 /* exchange-rates */;
+			baseConfigurationReferenceRelativePath = Resources/Configuration.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -399,6 +416,7 @@
 				DEVELOPMENT_TEAM = 4N5Z8SSZ59;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "exchange-rates/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,6 +446,7 @@
 				DEVELOPMENT_TEAM = 4N5Z8SSZ59;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "exchange-rates/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
