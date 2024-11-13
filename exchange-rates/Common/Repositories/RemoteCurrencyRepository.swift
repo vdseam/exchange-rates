@@ -13,6 +13,7 @@ protocol CurrencyRepository {
 }
 
 final class RemoteCurrencyRepository: CurrencyRepository {
+    // TODO: - Forbid arbitrary loads, use domain exceptions instead
     private let baseURL = URL(string: "http://data.fixer.io/api")
     
     func getLatestRates(baseCurrencyCode: String) async throws -> CurrencyExchangeResponse {

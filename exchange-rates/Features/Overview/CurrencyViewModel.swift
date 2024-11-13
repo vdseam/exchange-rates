@@ -154,9 +154,9 @@ final class CurrencyViewModel: ObservableObject {
             dateFormatter.timeZone = .current
             updatedAt = "at \(dateFormatter.string(from: date))"
         } else if Calendar.current.isDateInYesterday(date) {
-            updatedAt = "yesterday"
+            updatedAt = "Yesterday"
         } else {
-            updatedAt = "a long time ago"
+            updatedAt = "a Long Time Ago"
         }
     }
 }
