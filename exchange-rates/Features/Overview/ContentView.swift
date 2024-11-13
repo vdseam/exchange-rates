@@ -100,5 +100,5 @@ struct NoTapAnimationStyle: PrimitiveButtonStyle {
 }
 
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView().environment(\.managedObjectContext, PersistenceController.shared.context)
 }

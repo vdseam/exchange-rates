@@ -8,6 +8,7 @@
 import Combine
 
 class CurrencyViewModel: ObservableObject {
+    private let storage: CurrencyStorage
     private let repository: CurrencyRepository
     
     @Published private(set) var rates: [Currency] = []
@@ -204,39 +205,68 @@ class CurrencyViewModel: ObservableObject {
                 $0.code.localizedCaseInsensitiveContains(searchText)
             }
         }
-        
     }
     
-    init(repository: CurrencyRepository = MockCurrencyRepository()) {
+    init(storage: CurrencyStorage = LocalCurrencyStorage(), repository: CurrencyRepository = MockCurrencyRepository()) {
+        self.storage = storage
         self.repository = repository
     }
     
     func fetch() {
+        fetchCachedRates()
+        fetchAndCacheRemoteRates()
+    }
+    
+    private func fetchCachedRates() {
         isLoading = true
+        let cachedRates = storage.fetchCurrencies()
+        if !cachedRates.isEmpty {
+            rates = cachedRates
+            isLoading = false
+        }
+    }
+    
+    private func fetchAndCacheRemoteRates() {
+        if rates.isEmpty {
+            isLoading = true
+        }
         Task { @MainActor in
             do {
                 let response = try await repository.getLatestRates(baseCurrencyCode: "EUR")
+                
                 var i = 0
-                for (key, value) in response.rates {
-                    let symbol = CurrencySymbolProvider.currency(for: key)?.shortestSymbol ?? key
-                    let currency = Currency(
-                        index: i,
-                        code: key,
-                        name: names[key] ?? String(),
-                        symbol: symbol,
-                        value: value
-                    )
-                    rates.append(currency)
+                for (key, value) in response.rates.sorted(by: { $0.key < $1.key }) {
+                    updateOrAppendCurrency(code: key, value: value, index: i)
                     i += 1
                 }
+                storage.saveCurrencies(rates)
             } catch {
                 print(error.localizedDescription)
             }
+            // TODO: - Show network error when failed
             isLoading = false
+        }
+    }
+    
+    private func updateOrAppendCurrency(code: String, value: Double, index: Int) {
+        if let index = rates.firstIndex(where: { $0.code == code }) {
+            rates[index].value = value
+        } else {
+            // TODO: - Optimize the currency symbol provider
+            let symbol = CurrencySymbolProvider.currency(for: code)?.shortestSymbol ?? code
+            let currency = Currency(
+                index: index,
+                code: code,
+                name: names[code] ?? String(),
+                symbol: symbol,
+                value: value
+            )
+            rates.append(currency)
         }
     }
     
     func toggleFavorite(for currency: Currency) {
         rates[currency.index].isFavorite.toggle()
+        storage.toggleFavorite(for: currency.code)
     }
 }
