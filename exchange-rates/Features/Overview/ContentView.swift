@@ -38,7 +38,15 @@ struct ContentView: View {
             }
             .toolbar {
                 ToolbarItemGroup(placement: .bottomBar) {
-                    bottomBarItems
+                    filterButton
+                    
+                    Spacer()
+                    
+                    bottomStatusBar
+                    
+                    Spacer()
+                    
+                    baseCurrencyPicker
                 }
             }
         }
@@ -53,38 +61,39 @@ struct ContentView: View {
         }
     }
     
-    private var bottomBarItems: some View {
-        HStack {
-            Button {
-                viewModel.isFiltered.toggle()
-            } label: {
-                Image(systemName: viewModel.isFiltered ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
-            }
-            .buttonStyle(NoTapAnimationStyle())
-            
-            Spacer()
-            
-            VStack(spacing: 0) {
-                Text("Updated at 01:02")
-                // TODO: - Update the time when load method is called
+    private var filterButton: some View {
+        Button {
+            viewModel.isFiltered.toggle()
+        } label: {
+            Image(systemName: viewModel.isFiltered ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+        }
+        .buttonStyle(NoTapAnimationStyle())
+    }
+    
+    private var bottomStatusBar: some View {
+        VStack(spacing: 0) {
+            if viewModel.isLoading || viewModel.updatedAt.isEmpty {
+                Text("Loading...")
+            } else {
+                Text("Updated \(viewModel.updatedAt)")
                 
                 Text("Base: \(viewModel.baseCurrencyCode)")
                     .foregroundStyle(.secondary)
             }
-            .font(.system(size: 12))
-            
-            Spacer()
-            
-            Menu {
-                Picker(selection: $viewModel.baseCurrencyCode, label: EmptyView()) {
-                    ForEach(viewModel.rates, id: \.code) { rate in
-                        Text(rate.code)
-                    }
+        }
+        .font(.system(size: 12))
+    }
+    
+    private var baseCurrencyPicker: some View {
+        Menu {
+            Picker(selection: $viewModel.baseCurrencyCode, label: EmptyView()) {
+                ForEach(viewModel.rates, id: \.code) { rate in
+                    Text(rate.code)
                 }
-            } label: {
-                Button(action: {}) {
-                    Image(systemName: "ellipsis.circle")
-                }
+            }
+        } label: {
+            Button(action: {}) {
+                Image(systemName: "ellipsis.circle")
             }
         }
     }

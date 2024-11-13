@@ -8,6 +8,7 @@
 import Foundation
 
 struct CurrencyResponse: Codable {
+    let timestamp: TimeInterval
     let rates: [String: Double]
 }
 
@@ -44,10 +45,11 @@ final class MockCurrencyRepository: CurrencyRepository {
 
 extension MockCurrencyRepository {
     private func getMockData() -> Data? {
+        let timestamp = Date().timeIntervalSince1970
         let string = """
         {
             "success": true,
-            "timestamp": 1731312845,
+            "timestamp": \(timestamp),
             "base": "EUR",
             "date": "2024-11-11",
             "rates": {

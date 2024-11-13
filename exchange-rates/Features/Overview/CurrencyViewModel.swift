@@ -6,16 +6,19 @@
 //
 
 import Combine
+import Foundation
 
 class CurrencyViewModel: ObservableObject {
     private let storage: CurrencyStorage
     private let repository: CurrencyRepository
+    private var cancellable: Set<AnyCancellable> = []
     
     @Published private(set) var rates: [Currency] = []
     @Published private(set) var isLoading = false
+    @Published private(set) var updatedAt = String()
     
     @Published var searchText = String()
-    @Published var baseCurrencyCode = "EUR"
+    @Published var baseCurrencyCode = UserDefaults.baseCurrencyCode
     @Published var isFiltered = false
     
     private let names: [String: String] = [
@@ -197,6 +200,7 @@ class CurrencyViewModel: ObservableObject {
         if isFiltered {
             results = results.filter { $0.isFavorite }
         }
+        
         if searchText.isEmpty {
             return results
         } else {
@@ -210,9 +214,26 @@ class CurrencyViewModel: ObservableObject {
     init(storage: CurrencyStorage = LocalCurrencyStorage(), repository: CurrencyRepository = MockCurrencyRepository()) {
         self.storage = storage
         self.repository = repository
+        bind()
+    }
+    
+    private func bind() {
+        $baseCurrencyCode
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] baseCurrencyCode in
+                guard let self else { return }
+                UserDefaults.baseCurrencyCode = baseCurrencyCode
+                fetchAndCacheRemoteRates()
+                print("Fetching remote rates with base \(baseCurrencyCode)")
+            }
+            .store(in: &cancellable)
     }
     
     func fetch() {
+        if let timestamp = UserDefaults.timestamp {
+            formatTimestamp(timestamp)
+        }
         fetchCachedRates()
         fetchAndCacheRemoteRates()
     }
@@ -232,7 +253,10 @@ class CurrencyViewModel: ObservableObject {
         }
         Task { @MainActor in
             do {
-                let response = try await repository.getLatestRates(baseCurrencyCode: "EUR")
+                let response = try await repository.getLatestRates(
+                    baseCurrencyCode: baseCurrencyCode
+                )
+                updateAndFormatTimestamp(response.timestamp)
                 
                 var i = 0
                 for (key, value) in response.rates.sorted(by: { $0.key < $1.key }) {
@@ -248,6 +272,26 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
+    private func updateAndFormatTimestamp(_ timestamp: TimeInterval) {
+        UserDefaults.timestamp = timestamp
+        formatTimestamp(timestamp)
+    }
+    
+    private func formatTimestamp(_ timestamp: TimeInterval) {
+        let date = Date(timeIntervalSince1970: timestamp)
+        if Calendar.current.isDateInToday(date) {
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeStyle = DateFormatter.Style.short
+            dateFormatter.dateStyle = DateFormatter.Style.none
+            dateFormatter.timeZone = .current
+            updatedAt = "at \(dateFormatter.string(from: date))"
+        } else if Calendar.current.isDateInYesterday(date) {
+            updatedAt = "yesterday"
+        } else {
+            updatedAt = "a long time ago"
+        }
+    }
+    
     private func updateOrAppendCurrency(code: String, value: Double, index: Int) {
         if let index = rates.firstIndex(where: { $0.code == code }) {
             rates[index].value = value
@@ -255,7 +299,7 @@ class CurrencyViewModel: ObservableObject {
             // TODO: - Optimize the currency symbol provider
             let symbol = CurrencySymbolProvider.currency(for: code)?.shortestSymbol ?? code
             let currency = Currency(
-                index: index,
+                index: index + 1,
                 code: code,
                 name: names[code] ?? String(),
                 symbol: symbol,
