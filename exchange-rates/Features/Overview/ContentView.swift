@@ -23,7 +23,9 @@ struct ContentView: View {
                     ForEach(viewModel.searchResults, id: \.code) { rate in
                         ExchangeRateRow(currency: rate)
                             .swipeActions {
-                                Button("Favorite", systemImage: rate.isFavorite ? "star.slash.fill" : "star.fill") {
+                                Button("Favorite",
+                                       systemImage: rate.isFavorite ? "star.slash.fill" : "star.fill",
+                                       role: viewModel.isFiltered ? .destructive : .none) {
                                     viewModel.toggleFavorite(for: rate)
                                 }
                                 .tint(.orange)
@@ -33,6 +35,7 @@ struct ContentView: View {
             }
             .listStyle(.plain)
             .navigationTitle("Currencies")
+            .searchable(text: $viewModel.searchText)
             .refreshable {
                 viewModel.fetch()
             }
@@ -50,11 +53,21 @@ struct ContentView: View {
                 }
             }
         }
-        .searchable(text: $viewModel.searchText)
         .overlay {
-            if viewModel.searchResults.isEmpty, !viewModel.isLoading {
-                ContentUnavailableView.search
+            if viewModel.searchResults.isEmpty{
+                if viewModel.isFiltered {
+                    ContentUnavailableView {
+                        Label("No Favorites", systemImage: "star.fill")
+                    } description: {
+                        Text("Add some using a swipe action.")
+                    }
+                } else if !viewModel.searchText.isEmpty {
+                    ContentUnavailableView.search
+                }
             }
+//            if viewModel.searchResults.isEmpty, !viewModel.isLoading {
+//                ContentUnavailableView.search
+//            }
         }
         .task {
             viewModel.fetch()
