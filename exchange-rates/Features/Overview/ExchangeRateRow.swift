@@ -18,7 +18,7 @@ struct ExchangeRateRow: View {
                     .lineLimit(1)
                 
                 HStack(spacing: 6) {
-                    Text("\(currency.index)")
+                    Text("\(currency.index + 1)")
                         .padding(.vertical, 2)
                         .padding(.horizontal, 8)
                         .background(.primary.opacity(0.12))

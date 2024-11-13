@@ -92,6 +92,7 @@ struct ContentView: View {
                     Text($0)
                 }
             }
+            .disabled(true)
         } label: {
             Button(action: {}) {
                 Image(systemName: "ellipsis.circle")

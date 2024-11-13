@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 
-class CurrencyViewModel: ObservableObject {
+final class CurrencyViewModel: ObservableObject {
     private let storage: CurrencyStorage
     private let repository: CurrencyRepository
     private var cancellable: Set<AnyCancellable> = []
@@ -21,6 +21,7 @@ class CurrencyViewModel: ObservableObject {
     @Published var baseCurrencyCode = UserDefaults.baseCurrencyCode
     @Published var isFiltered = false
     
+    // TODO: - Receive these remotely only once, when cache is empty.
     private let names: [String: String] = [
         "AED": "United Arab Emirates Dirham",
         "AFN": "Afghan Afghani",
@@ -211,24 +212,29 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Initializer
+    
     init(storage: CurrencyStorage = LocalCurrencyStorage(), repository: CurrencyRepository = RemoteCurrencyRepository()) {
         self.storage = storage
         self.repository = repository
         bind()
     }
     
+    // MARK: - Bindings
+    
     private func bind() {
         $baseCurrencyCode
             .dropFirst()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] baseCurrencyCode in
-                guard let self else { return }
+            .sink { baseCurrencyCode in
                 UserDefaults.baseCurrencyCode = baseCurrencyCode
                 // FIXME: - Euro is the only base currency available for free
                 // fetchAndCacheRemoteRates()
             }
             .store(in: &cancellable)
     }
+    
+    // MARK: - Cache & Networking
     
     func fetch() {
         if let timestamp = UserDefaults.timestamp {
@@ -253,6 +259,8 @@ class CurrencyViewModel: ObservableObject {
         }
         Task { @MainActor in
             do {
+                // We may request only the filtered currencies,
+                // but it be inconvenient to update the list partially.
                 let response = try await repository.getLatestRates(
                     baseCurrencyCode: baseCurrencyCode
                 )
@@ -272,6 +280,30 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
+    private func updateOrAppendCurrency(code: String, value: Double, index: Int) {
+        if let index = rates.firstIndex(where: { $0.code == code }) {
+            rates[index].value = value
+        } else {
+            // TODO: - Optimize the currency symbol provider
+            let symbol = CurrencySymbolProvider.currency(for: code)?.shortestSymbol ?? code
+            let currency = Currency(
+                index: index,
+                code: code,
+                name: names[code] ?? String(),
+                symbol: symbol,
+                value: value
+            )
+            rates.append(currency)
+        }
+    }
+    
+    func toggleFavorite(for currency: Currency) {
+        rates[currency.index].isFavorite.toggle()
+        storage.toggleFavorite(for: currency.code)
+    }
+    
+    // MARK: - Date Formatter
+    
     private func updateAndFormatTimestamp(_ timestamp: TimeInterval) {
         UserDefaults.timestamp = timestamp
         formatTimestamp(timestamp)
@@ -290,27 +322,5 @@ class CurrencyViewModel: ObservableObject {
         } else {
             updatedAt = "a long time ago"
         }
-    }
-    
-    private func updateOrAppendCurrency(code: String, value: Double, index: Int) {
-        if let index = rates.firstIndex(where: { $0.code == code }) {
-            rates[index].value = value
-        } else {
-            // TODO: - Optimize the currency symbol provider
-            let symbol = CurrencySymbolProvider.currency(for: code)?.shortestSymbol ?? code
-            let currency = Currency(
-                index: index + 1,
-                code: code,
-                name: names[code] ?? String(),
-                symbol: symbol,
-                value: value
-            )
-            rates.append(currency)
-        }
-    }
-    
-    func toggleFavorite(for currency: Currency) {
-        rates[currency.index].isFavorite.toggle()
-        storage.toggleFavorite(for: currency.code)
     }
 }
