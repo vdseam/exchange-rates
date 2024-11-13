@@ -7,9 +7,11 @@
 
 import Foundation
 
-struct ExchangeRate: Identifiable {
-    let id = UUID()
-    let currency: String
-    let rate: Double
-    var isFavorite = false
+struct Currency {
+    let index: Int // 0–200
+    let code: String // USD
+    let name: String // United States Dollar
+    let symbol: String // $
+    let value: Double // 44.40
+    var isFavorite: Bool = false
 }

@@ -8,25 +8,23 @@
 import SwiftUI
 
 struct ExchangeRateRow: View {
-    let symbol: String
-    let description: String
-    let value: Double
-    let index: Int
+    let currency: Currency
     
     var body: some View {
-        HStack {
+        HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 6) {
-                Text(description)
+                Text(currency.name)
                     .font(.headline)
+                    .lineLimit(1)
                 
                 HStack(spacing: 6) {
-                    Text("\(index)")
+                    Text("\(currency.index)")
                         .padding(.vertical, 2)
                         .padding(.horizontal, 8)
                         .background(.primary.opacity(0.12))
                         .clipShape(.rect(cornerRadius: 6))
                     
-                    Text(symbol)
+                    Text(currency.code)
                         .foregroundStyle(.secondary)
                 }
                 .font(.system(size: 14, weight: .medium))
@@ -35,13 +33,15 @@ struct ExchangeRateRow: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 6) {
-                Text(String(format: "%@%.2f", CurrencySymbolProvider.currency(for: symbol)?.shortestSymbol ?? symbol, value))
+                // CurrencySymbolProvider.currency(for: symbol)?.shortestSymbol ?? symbol
+                Text(String(format: "%@%.2f", currency.symbol, currency.value))
                     .font(.headline)
                 
-                Image(systemName: "star.fill")
-                    .foregroundStyle(.orange)
-                    .font(.system(size: 14, weight: .medium))
-                    .opacity(Bool.random() ? 0 : 1)
+                if currency.isFavorite {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(.orange)
+                        .font(.system(size: 14, weight: .medium))
+                }
             }
         }
     }
