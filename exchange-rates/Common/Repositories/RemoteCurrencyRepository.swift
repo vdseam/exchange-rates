@@ -24,6 +24,7 @@ final class RemoteCurrencyRepository: CurrencyRepository {
         return try JSONDecoder().decode(CurrencyExchangeResponse.self, from: data)
     }
     
+    // FIXME: - Locale to get both currency symbol and name, decreasing the amount of requests
     func getCurrencyNames() async throws -> CurrencyNameResponse {
         guard let request = request(to: "symbols") else {
             throw URLError(.badURL)

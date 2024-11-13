@@ -11,23 +11,26 @@ import Foundation
 final class CurrencyViewModel: ObservableObject {
     private let storage: CurrencyStorage
     private let repository: CurrencyRepository
-    private var cancellable: Set<AnyCancellable> = []
     
-    private var currencyNames: [String: String] = [:]
-    @Published private(set) var rates: [Currency] = []
+    @Published var searchText = String()
+    @Published private var rates: [Currency] = []
     @Published private(set) var isLoading = false
     
-    @Published private(set) var updatedAt = String()
-    @Published var searchText = String()
-    @Published var baseCurrencyCode = UserDefaults.baseCurrencyCode
+    @Published private(set) var error: String?
+    @Published var isErrorPresented = false
+    
     @Published var isFiltered = false
+    @Published private(set) var updatedAt = String()
+    @Published var baseCurrencyCode = UserDefaults.baseCurrencyCode
+    
+    private var currencyNames: [String: String] = [:]
+    private var cancellable: Set<AnyCancellable> = []
     
     var searchResults: [Currency] {
         var results = rates
         if isFiltered {
             results = results.filter { $0.isFavorite }
         }
-        
         if searchText.isEmpty {
             return results
         } else {
@@ -40,7 +43,8 @@ final class CurrencyViewModel: ObservableObject {
     
     // MARK: - Initializer
     
-    init(storage: CurrencyStorage = LocalCurrencyStorage(), repository: CurrencyRepository = RemoteCurrencyRepository()) {
+    init(storage: CurrencyStorage = LocalCurrencyStorage(),
+         repository: CurrencyRepository = RemoteCurrencyRepository()) {
         self.storage = storage
         self.repository = repository
         bind()
@@ -97,27 +101,27 @@ final class CurrencyViewModel: ObservableObject {
                     baseCurrencyCode: baseCurrencyCode
                 )
                 updateAndFormatTimestamp(response.timestamp)
+                let symbolProvider: CurrencySymbolProviding = CurrencySymbolProvider.shared
                 
                 var i = 0
                 for (key, value) in response.rates.sorted(by: { $0.key < $1.key }) {
-                    updateOrAppendCurrency(code: key, value: value, index: i)
+                    let symbol = symbolProvider.symbol(for: key)
+                    updateOrAppendCurrency(index: i, code: key, symbol: symbol, value: value)
                     i += 1
                 }
                 storage.saveCurrencies(rates)
             } catch {
-                print(error.localizedDescription)
+                self.error = error.localizedDescription
+                isErrorPresented = true
             }
-            // TODO: - Show network error when failed
             isLoading = false
         }
     }
     
-    private func updateOrAppendCurrency(code: String, value: Double, index: Int) {
+    private func updateOrAppendCurrency(index: Int, code: String, symbol: String, value: Double) {
         if let index = rates.firstIndex(where: { $0.code == code }) {
             rates[index].value = value
         } else {
-            // TODO: - Optimize the currency symbol provider
-            let symbol = CurrencySymbolProvider.currency(for: code)?.shortestSymbol ?? code
             let currency = Currency(
                 index: index,
                 code: code,

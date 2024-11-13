@@ -53,8 +53,17 @@ struct ContentView: View {
                 }
             }
         }
+        .alert("Unable to Update Rates",
+               isPresented: $viewModel.isErrorPresented,
+               actions: {
+            Button("OK", role: .cancel) {}
+        }, message: {
+            if let error = viewModel.error {
+                Text(error)
+            }
+        })
         .overlay {
-            if viewModel.searchResults.isEmpty{
+            if viewModel.searchResults.isEmpty {
                 if viewModel.isFiltered {
                     ContentUnavailableView {
                         Label("No Favorites", systemImage: "star.fill")
@@ -65,9 +74,6 @@ struct ContentView: View {
                     ContentUnavailableView.search
                 }
             }
-//            if viewModel.searchResults.isEmpty, !viewModel.isLoading {
-//                ContentUnavailableView.search
-//            }
         }
         .task {
             viewModel.fetch()
@@ -78,9 +84,10 @@ struct ContentView: View {
         Button {
             viewModel.isFiltered.toggle()
         } label: {
-            Image(systemName: viewModel.isFiltered ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+            Image(systemName: viewModel.isFiltered ?
+                  "line.3.horizontal.decrease.circle.fill" :
+                  "line.3.horizontal.decrease.circle")
         }
-        .buttonStyle(NoTapAnimationStyle())
     }
     
     private var bottomStatusBar: some View {
@@ -114,15 +121,8 @@ struct ContentView: View {
     }
 }
 
-struct NoTapAnimationStyle: PrimitiveButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .contentShape(Rectangle())
-            .onTapGesture(perform: configuration.trigger)
-            .foregroundStyle(.blue)
-    }
-}
-
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.shared.context)
+    ContentView()
+        .environment(\.managedObjectContext, PersistenceController.shared.context)
+        .preferredColorScheme(.dark)
 }
