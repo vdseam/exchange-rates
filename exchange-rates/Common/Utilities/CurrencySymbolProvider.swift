@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol CurrencySymbolProviding {
+protocol CurrencySymbolProviding: AnyObject {
     func symbol(for code: String) -> String
 }
 
