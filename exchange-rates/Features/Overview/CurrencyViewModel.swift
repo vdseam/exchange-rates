@@ -211,7 +211,7 @@ class CurrencyViewModel: ObservableObject {
         }
     }
     
-    init(storage: CurrencyStorage = LocalCurrencyStorage(), repository: CurrencyRepository = MockCurrencyRepository()) {
+    init(storage: CurrencyStorage = LocalCurrencyStorage(), repository: CurrencyRepository = RemoteCurrencyRepository()) {
         self.storage = storage
         self.repository = repository
         bind()
@@ -224,8 +224,8 @@ class CurrencyViewModel: ObservableObject {
             .sink { [weak self] baseCurrencyCode in
                 guard let self else { return }
                 UserDefaults.baseCurrencyCode = baseCurrencyCode
-                fetchAndCacheRemoteRates()
-                print("Fetching remote rates with base \(baseCurrencyCode)")
+                // FIXME: - Euro is the only base currency available for free
+                // fetchAndCacheRemoteRates()
             }
             .store(in: &cancellable)
     }

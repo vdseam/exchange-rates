@@ -54,7 +54,6 @@ final class LocalCurrencyStorage: CurrencyStorage {
         
         do {
             let items = try context.fetch(fetchRequest)
-            print("Fetched \(items.count) items from local storage")
             return items.map { item in
                 Currency(
                     index: Int(item.index),

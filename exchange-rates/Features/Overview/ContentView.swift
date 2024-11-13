@@ -86,9 +86,10 @@ struct ContentView: View {
     
     private var baseCurrencyPicker: some View {
         Menu {
+            let availableBaseCurrencies = ["EUR"]
             Picker(selection: $viewModel.baseCurrencyCode, label: EmptyView()) {
-                ForEach(viewModel.rates, id: \.code) { rate in
-                    Text(rate.code)
+                ForEach(availableBaseCurrencies, id: \.self) {
+                    Text($0)
                 }
             }
         } label: {

@@ -20,13 +20,16 @@ final class RemoteCurrencyRepository: CurrencyRepository {
     private let baseURL = "http://data.fixer.io/api/latest"
     
     func getLatestRates(baseCurrencyCode: String) async throws -> CurrencyResponse {
-        guard let url = URL(string: "\(baseURL)?base=\(baseCurrencyCode)") else {
+        var urlComponents = URLComponents(string: baseURL)
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "access_key", value: Environment.apiKey),
+            URLQueryItem(name: "base", value: baseCurrencyCode)
+        ]
+        guard let url = urlComponents?.url else {
             throw URLError(.badURL)
         }
         
-        var request = URLRequest(url: url)
-        request.setValue(Environment.apiKey, forHTTPHeaderField: "access_key")
-        
+        let request = URLRequest(url: url)
         let (data, _) = try await URLSession.shared.data(for: request)
         return try JSONDecoder().decode(CurrencyResponse.self, from: data)
     }
