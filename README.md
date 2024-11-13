@@ -1,4 +1,4 @@
-# Currency Exchange Rates
+# Exchange Rates
 
 ## Overview
 This is a simple iOS application developed using **Swift** to display currency exchange rates. The app allows users to view a list of exchange rates, add specific rates to their favorites, and access previously viewed and favorited rates offline. The application is built using **SwiftUI**, **Combine**, and **CoreData** for managing offline data.
@@ -77,3 +77,7 @@ While the following features were considered, they were not implemented due to l
 1. **Base Currency Switch**: The idea behind this feature is to allow the user to select a base currency, with the exchange rates being calculated in relation to that selected base. For example, if a user selects USD as the base currency, all other exchange rates would be displayed as how much of another currency equals 1 USD.
 2. **Historical Rates with Graphs**: Historical exchange rates for a selected currency pair, similar to what is seen in Apple Stocks. Users would be able to track how exchange rates have changed over time, helping them make informed decisions.
 3. **Two-Way Currency Converter**: A two-way converter would allow users to convert between two currencies in both directions. For example, if a user wants to convert USD to EUR, they would input the amount in USD, and the app would return the equivalent in EUR.
+
+## Demo
+https://github.com/user-attachments/assets/6e4446ea-7668-4c61-b3fe-8ca7573df8a8
+
