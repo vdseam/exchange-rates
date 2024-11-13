@@ -33,7 +33,6 @@ final class RemoteCurrencyRepository: CurrencyRepository {
 
 final class MockCurrencyRepository: CurrencyRepository {
     func getLatestRates(baseCurrencyCode: String) async throws -> CurrencyResponse {
-        print(Environment.apiKey)
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         guard let jsonData = getMockData() else {

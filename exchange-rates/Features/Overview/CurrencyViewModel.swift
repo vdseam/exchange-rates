@@ -192,7 +192,6 @@ class CurrencyViewModel: ObservableObject {
     ]
     
     var searchResults: [Currency] {
-        // TODO: - Optimize the search by both title and code
         var results = rates
         if isFiltered {
             results = results.filter { $0.isFavorite }
@@ -200,7 +199,10 @@ class CurrencyViewModel: ObservableObject {
         if searchText.isEmpty {
             return results
         } else {
-            return results.filter { $0.name.contains(searchText) }
+            return results.filter {
+                $0.name.localizedCaseInsensitiveContains(searchText) ||
+                $0.code.localizedCaseInsensitiveContains(searchText)
+            }
         }
         
     }
