@@ -37,9 +37,9 @@ The app follows the following folder structure:
 
 1. **Application** folder: Contains the main `App` file.
 2. **Common** folder:
-    - **Extensions**: Contains helper extensions for various utilities.
-    - **Models**:
-        - **Response**: Contains response models for parsing API data.
+    - **Extensions** folder: Contains helper extensions for various utilities.
+    - **Models** folder:
+        - **Response** folder: Contains response models for parsing API data.
         - **Currency**: Models specific to currency data and handling.
     - **Repositories**:
         - **MockCurrencyRepository**: Mock implementation of currency data fetching (for testing purposes).
@@ -49,7 +49,7 @@ The app follows the following folder structure:
         - **Environment**: Contains API key configuration and environment setup.
         - **LocalCurrencyStorage**: Manages CoreData storage for offline mode.
 3. **Features** folder:
-    - **Overview**:
+    - **Overview** folder:
         - **ContentView**: The main view that displays the list of currencies.
         - **CurrencyViewModel**: The view model that manages data for `ContentView`.
         - **ExchangeRateRow**: Represents each row in the list of exchange rates.
