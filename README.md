@@ -66,6 +66,9 @@ Offline mode is supported as follows:
 ### API Key Storage
 API keys are securely stored using a bash file that is read into the config files once the project builds or runs. This bash file is added to `.gitignore` to prevent it from being pushed to the repository. The approach involves using run scripts for the build schemes, ensuring that API keys are securely managed during development without exposing them in the repository.
 
+### Error Handling
+To ensure a smooth user experience even in the case of failed API requests, the app includes error handling mechanisms. If an API request fails due to network issues, invalid responses, or any other error, an alert is displayed to inform the user about the failure.
+
 ### Libraries & Tools Used
 - **Swift**: The programming language used to develop the app.
 - **SwiftUI**: For building the UI.
