@@ -79,5 +79,5 @@ While the following features were considered, they were not implemented due to l
 3. **Two-Way Currency Converter**: A two-way converter would allow users to convert between two currencies in both directions. For example, if a user wants to convert USD to EUR, they would input the amount in USD, and the app would return the equivalent in EUR.
 
 ## Demo
-https://github.com/user-attachments/assets/6e4446ea-7668-4c61-b3fe-8ca7573df8a8
+https://github.com/user-attachments/assets/41e60a94-e2d1-4c9d-b7ea-d28c89f57833
 
