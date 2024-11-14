@@ -35,7 +35,7 @@ This layout ensures a smooth and intuitive user experience, while also making th
 ### App Structure
 The app follows the following folder structure:
 
-1. **Application** folder: Contains the root `WindowScene` file.
+1. **Application** folder: Contains the main `App` file.
 2. **Common** folder:
     - **Extensions**: Contains helper extensions for various utilities.
     - **Models**:
