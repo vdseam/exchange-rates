@@ -35,12 +35,10 @@ This layout ensures a smooth and intuitive user experience, while also making th
 ### App Structure
 The app follows the following folder structure:
 
-1. **Application** folder: Contains the main `App` file.
-2. **Common** folder:
-    - **Extensions** folder: Contains helper extensions for various utilities.
-    - **Models** folder:
-        - **Response** folder: Contains response models for parsing API data.
-        - **Currency**: Models specific to currency data and handling.
+1. **Application**: Contains the main `App` file.
+2. **Common**:
+    - **Extensions**: Contains helper extensions for various utilities.
+    - **Models**: Contains response models for parsing API data.
     - **Repositories**:
         - **MockCurrencyRepository**: Mock implementation of currency data fetching (for testing purposes).
         - **RemoteCurrencyRepository**: Responsible for making remote API calls to fetch live currency data.
@@ -48,16 +46,15 @@ The app follows the following folder structure:
         - **CurrencySymbolProvider**: Provides currency symbols based on the currency code.
         - **Environment**: Contains API key configuration and environment setup.
         - **LocalCurrencyStorage**: Manages CoreData storage for offline mode.
-3. **Features** folder:
-    - **Overview** folder:
+3. **Features**:
+    - **Overview**:
         - **ContentView**: The main view that displays the list of currencies.
         - **CurrencyViewModel**: The view model that manages data for `ContentView`.
         - **ExchangeRateRow**: Represents each row in the list of exchange rates.
-4. **Resources** folder:
+4. **Resources**:
     - Includes assets, API key configuration, etc.
 
 ### Offline Mode Implementation
-Offline mode is supported as follows:
 - When the app is launched, we first check if there is any data in **CoreData**. If there is, we display the locally stored exchange rates.
 - If there is no data in CoreData, **skeleton rows** are shown to indicate that data is loading.
 - After displaying the offline data (if available), the app makes an API request to fetch the updated exchange rates.
