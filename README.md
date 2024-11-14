@@ -1,7 +1,7 @@
 # Exchange Rates
 
 ## Overview
-This is a simple iOS application developed using **Swift** to display currency exchange rates. The app allows users to view a list of exchange rates, add specific rates to their favorites, and access previously viewed and favorited rates offline. The application is built using **SwiftUI**, **Combine**, and **CoreData** for managing offline data.
+A simple iOS application developed using **Swift** to display currency exchange rates. The app allows users to view a list of exchange rates, add specific rates to their favorites, and access previously viewed and favorited rates offline. The application is built using **SwiftUI**, **Combine**, and **CoreData** for managing offline data.
 
 ## Features
 - A list of currency exchange rates fetched from the **Fixer API**.
@@ -20,7 +20,17 @@ The app is built using the **MVVM (Model-View-ViewModel)** design pattern. This 
 - **View**: The SwiftUI views display the data.
 - **ViewModel**: Contains business logic and prepares data for the view.
 
-The app uses **Combine** for reactive programming to handle data updates and bindings between the model and view. 
+**Combine** is used for reactive programming to handle data updates and bindings between the model and view.
+
+### User Interface
+The design of this app takes inspiration from Apple's Stocks and Mail apps, focusing on simplicity, clarity, and ease of use. Every currency row in the list includes an index to indicate the position of the currency, helping users easily track and locate specific currencies even when searching. It also displays essential information such as the currency name, code, symbol, and value relative to the selected base currency.
+
+At the bottom of the screen, there is a toolbar with several key functionalities: 
+- A toggle button on the left allows users to filter the list to show only their favorite currencies. 
+- A button on the right lets users switch between available base currencies. 
+- A label in the center shows the last update time, keeping users informed of when the data was last refreshed.
+
+This layout ensures a smooth and intuitive user experience, while also making the app visually consistent with familiar Apple design patterns.
 
 ### App Structure
 The app follows the following folder structure:
